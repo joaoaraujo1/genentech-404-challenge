@@ -8,6 +8,31 @@ Finally, two held out test sets of equal size will be released, each with a diff
 
 We expect the winning submissions will likely be an algorithm that can automatically characterize the pattern of missing data and adapt its imputation approach to the missingness type.
 
+## Data Description
+Each row in the csv corresponds to a single subject visit. The data is longitudinal and all datasets (training set, public leaderboard set, and private leaderboard set) were split by subject. Ordinal or categorical variables will be treated as continuous during evaluation. Performance will be measured using range normalized mean absolute error (MAE).
+
+Variables that are always observed:
+
+- `RID_hash` - unique subject ID
+- `VISCODE` - visit code, referring to the number of months
+
+Variables that may have missingness:
+
+- `AGE` - age at that particular visit
+- `PTGENDER_num` - sex {0: 'Male', 1: 'Female'}
+- `PTEDUCAT` - education level
+- `DX_num` - diagnosis {0: 'Cognitively Normal', 1: 'Mild Cognitive Impairment', 2: 'Dementia'}
+- `APOE4` - number of APOE e4 alleles
+- `CDRSB` - cognitive score, Clinical Dementia Rating Sum of Boxes
+- `MMSE` - cognitive score, Mini‐Mental State Examination
+- `ADAS13` - cognitive score, Alzheimer's Disease Assessment Scale-Cognitive Subscale
+- `Ventricles` - ventricle volume
+- `Hippocampus` - hippocampus volume
+- `WholeBrain` - whole brain volume
+- `Entorhinal` - entorhinal volume
+- `Fusiform` - fusiform volume
+- `MidTemp` - midtemp volume
+
 ## My solution (TL;DR)
 Let *y* be a missing entry of test patient *n*, not easily deducible by its missingness context. Evaluate the “row-wise missingness” in the row entry where *y* is missing (i.e. how many variables are present/missing in that row) and the “patient-wise missingness” (i.e. how many variables are present/missing in the full data matrix of the patient n). Build datasets to train linear/non-linear models and centrality metrics for variable *y* for both missingness contexts. Estimate the MAE for all models and centrality metrics using grouped k-fold cross-validation. Pick the best solution and train a new model (or estimate a centrality metric if the models don’t work better) with all available training data. Estimate *y*. Repeat for all entries and test patients.
 
